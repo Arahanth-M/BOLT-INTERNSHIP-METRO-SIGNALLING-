@@ -1,0 +1,27 @@
+import conf
+from boltiot import Sms,Bolt
+import json,time
+mybolt = Bolt(conf.API_KEY,conf.DEVICE_ID)
+sms = Sms(conf.SID,conf.AUTH_TOKEN,conf.TO_NUMBER,conf.FROM_NUMBER)
+min_limit = 20
+max_limit = 100
+while True:
+	mybolt.digitalWrite('1','HIGH')
+	time.sleep(0.000001)
+	mybolt.digitalWrite('1','LOW')
+	response = mybolt.digitalRead('2')
+	data = json.loads(response)
+	t = int(data['value'])
+	distance = t * 0.017
+	try:
+		Distance = int(distance)
+		if Distance < min_limit:
+			sms.send_sms("A train is near yoir              train. Slow down !!")
+		elif Distance > max_limit:
+			sms.send_sms("You can speed up .            No train around !!")
+	except Exception as e :
+			print("An error occured and thr                      detsils are given below")
+			print(e)
+	time.sleep(2)
+			
+			
